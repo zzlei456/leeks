@@ -1,9 +1,7 @@
 package handler;
 
 import bean.StockBean;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import utils.HttpClientPool;
 import utils.LogUtil;
 
@@ -52,7 +50,7 @@ public class SinaStockHandler extends StockRefreshHandler {
             codeMap.put(strArray[0], strArray);
         }
 
-        String params = Joiner.on(",").join(codeList);
+        String params = String.join(",", codeList);
         try {
             String res = HttpClientPool.getHttpClient().get(URL + params);
 //            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));
@@ -88,7 +86,7 @@ public class SinaStockHandler extends StockRefreshHandler {
                     .multiply(BigDecimal.TEN)
                     .setScale(2, RoundingMode.HALF_UP);
             bean.setChangePercent(percent.toString());
-            bean.setTime(Strings.repeat("0", 8) + split[31]);
+            bean.setTime("0".repeat(8) + split[31]);
             bean.setMax(split[4]);
             bean.setMin(split[5]);
 

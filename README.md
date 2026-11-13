@@ -9,8 +9,35 @@ idea插件，查看基金，股票：支持A股，港股，美股
 提issues附上:使用的插件版本、IDEA详细的版本信息(到Help->about里面复制出来)，如果【Event Log】有异常信息，也请在issues附上异常  
 
 ## 安装   
+当前版本 **2.1.1** 支持 IntelliJ IDEA **2026.2.3**（Build `262.10968.63`）及同一 `262` 分支的后续版本。
+旧版 IDEA 请使用之前的插件版本。
+
 [插件下载地址](https://github.com/huage2580/leeks/releases)  
 找到 leeks-x.x.x.zip 下载后，直接在IDEA里面安装（安装方式自行百度），注意：直接选择zip文件安装，不要解压。  
+
+在 IDEA 的 **Settings → Plugins → 齿轮菜单 → Install Plugin from Disk** 中选择 `leeks-2.1.1.zip`，按提示重启 IDEA。
+
+## 本地构建与兼容性验证
+
+安装 JDK 25，将 `JAVA_HOME` 指向该 JDK，然后运行：
+
+```powershell
+.\gradlew.bat clean test verifyPlugin
+```
+
+构建使用 Gradle 9.1.0 和 IntelliJ Platform Gradle Plugin 2.19.0，默认下载 IDEA 2026.2.3 SDK。
+TinyPinyin 2.0.3 通过限定模块范围的 JCenter 存档镜像解析，其余普通依赖使用 Maven Central。
+也可以复用已安装的相同版本 IDEA，路径根据本机安装位置填写：
+
+```powershell
+.\gradlew.bat clean test verifyPlugin "-PlocalIdePath=D:\soft\IntelliJ IDEA 2026.2.3"
+.\gradlew.bat runIde "-PlocalIdePath=D:\soft\IntelliJ IDEA 2026.2.3"
+```
+
+安装包位于 `build/distributions/leeks-2.1.1.zip`，验证报告位于 `build/reports/pluginVerifier`。
+`test` 会先生成安装包，再检查运行依赖隔离加载、四个 Swing 表单编译、HTTP 成功及失败场景，以及核心平台中的三个页签、设置回显、排序、刷新开关和通知。
+兼容性检查使用目标 SDK 及本地依赖，不额外下载 Marketplace 插件。
+`runIde` 使用独立沙箱，不会覆盖日常 IDEA 的插件和设置。
 
 ## 使用  
 设置里面找到Leeks选项，输入基金编码，股票编码，英文分号分割【;】，apply。    
@@ -58,6 +85,8 @@ double shift，连按两下shift，输入leeks，找到toolWindow，打开以后
   解决：确保填写的股票数据格式不正确，有小写前缀。示例（sh000001;sh600519;sz000001;hk00700;usAAPL）
 
 ## change  
+- v2.1.1
+适配 IDEA 2026.2.3；迁移 Commons Lang 3，显式打包运行依赖，修复启动时找不到 `org.apache.commons.lang.StringUtils` 的问题；升级构建及通知 API。
 - v1.1   
 增加了股票的tab，采用腾讯的行情接口，股票轮询间隔10s  
 - v1.2   

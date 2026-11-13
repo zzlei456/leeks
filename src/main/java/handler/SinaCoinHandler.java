@@ -1,6 +1,5 @@
 package handler;
 
-import com.google.common.base.Joiner;
 import bean.CoinBean;
 import utils.HttpClientPool;
 import utils.LogUtil;
@@ -34,7 +33,7 @@ public class SinaCoinHandler extends CoinRefreshHandler {
     }
 
     private void pollStock(List<String> code) {
-        String params = Joiner.on(",").join(code);
+        String params = String.join(",", code);
         try {
             String res = HttpClientPool.getHttpClient().get(URL + params);
 //            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));

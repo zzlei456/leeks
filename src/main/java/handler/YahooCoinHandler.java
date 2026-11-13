@@ -2,7 +2,6 @@ package handler;
 
 import bean.CoinBean;
 import bean.YahooResponse;
-import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import utils.HttpClientPool;
 import utils.LogUtil;
@@ -36,7 +35,7 @@ public class YahooCoinHandler extends CoinRefreshHandler {
         if (code.isEmpty()){
             return;
         }
-        String params = Joiner.on(",").join(code);
+        String params = String.join(",", code);
         try {
             String res = HttpClientPool.getHttpClient().get(URL + params + KEYS);
 //            String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS"));

@@ -6,8 +6,9 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
-import com.intellij.ui.tabs.impl.JBTabsImpl;
-import org.apache.commons.lang.StringUtils;
+import com.intellij.ui.tabs.JBTabs;
+import com.intellij.ui.tabs.JBTabsFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,7 @@ public class PopupsUiUtil {
     public static void showImageByFundCode(String fundCode, FundShowType type, Point showByPoint) throws MalformedURLException {
         //------试图解决个BUG，项目销毁的问题-------
         Project project = LogUtil.getProject();
-        if (project.isDisposed()){
+        if (project == null || project.isDisposed()){
             return;
         }
         // 图片接口
@@ -38,9 +39,9 @@ public class PopupsUiUtil {
         TabInfo tabInfo = new TabInfo(new JLabel(new ImageIcon(new URL(String.format("http://j4.dfcfw.com/charts/pic7/%s.png?%s",
                 fundCode, System.currentTimeMillis())))));
         tabInfo.setText(type.getDesc());
-        JBTabsImpl tabs = new JBTabsImpl(LogUtil.getProject());
+        JBTabs tabs = JBTabsFactory.createTabs(project);
         tabs.addTab(tabInfo);
-        JBPopupFactory.getInstance().createBalloonBuilder(tabs)
+        JBPopupFactory.getInstance().createBalloonBuilder(tabs.getComponent())
                 .setBorderInsets(new Insets(0, 0, 0, 0))
                 .createBalloon().show(RelativePoint.fromScreen(showByPoint), Balloon.Position.atRight);
     }
@@ -107,7 +108,11 @@ public class PopupsUiUtil {
      * @param showByPoint 窗口显示位置
      */
     public static void showImageByStockCode(String stockCode, StockShowType selectType, Point showByPoint) throws MalformedURLException {
-        JBTabsImpl tabs = new JBTabsImpl(LogUtil.getProject());
+        Project project = LogUtil.getProject();
+        if (project == null || project.isDisposed()) {
+            return;
+        }
+        JBTabs tabs = JBTabsFactory.createTabs(project);
         for (StockShowType type : StockShowType.values()) {
             String imageUrlByStock = getImageUrlByStock(stockCode, type);
             JLabel label = new JLabel(imageUrlByStock);
@@ -122,7 +127,6 @@ public class PopupsUiUtil {
             }
         }
         tabs.addListener(new TabsListener() {
-            // 兼容到2017，请勿修改
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 JComponent component = newSelection.getComponent();
@@ -139,7 +143,7 @@ public class PopupsUiUtil {
                 }
             }
         });
-        JBPopupFactory.getInstance().createBalloonBuilder(tabs)
+        JBPopupFactory.getInstance().createBalloonBuilder(tabs.getComponent())
                 .setBorderInsets(new Insets(0, 0, 0, 0))
                 .createBalloon().show(RelativePoint.fromScreen(showByPoint), Balloon.Position.atRight);
     }
